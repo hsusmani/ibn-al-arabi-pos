@@ -49,9 +49,10 @@ class LoginForm extends Form
         // set preferred currency
         $preferred_currency = User::where('id', auth()->user()->id)->pluck('preferred_currency')->first();
         if(empty($preferred_currency)) {
-            $preferred_currency = User::where('id', auth()->user()->id)->update(['preferred_currency' => 'egp']);
+            User::where('id', auth()->user()->id)->update(['preferred_currency' => 'egp']);
         }
-        session(['preferred_currency' => strtoupper($preferred_currency)]);
+        // dd($preferred_currency->pluck());
+        session(['preferred_currency' => strtoupper(User::where('id', auth()->user()->id)->pluck('preferred_currency')->first())]);
     }
 
     /**

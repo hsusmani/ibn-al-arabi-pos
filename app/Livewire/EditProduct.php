@@ -48,9 +48,10 @@ class EditProduct extends Component
             if($key == 'mad') $this->price_mad = $value;
         }
 
+        // dd($this->product->id);
         $this->imageSrc = $product->image;
         $this->name = $product->name;
-        $this->qnty = Stock::whereRelation('product', 'product_id', $this->product->first()->id)->pluck('available_qnty')->first();
+        $this->qnty = Stock::whereRelation('product', 'product_id', $this->product->id)->pluck('available_qnty')->first();
         $this->barcode = $product->barcode;
         $this->sku = $product->sku;
         $this->cover_type = $product->cover;
@@ -98,8 +99,8 @@ class EditProduct extends Component
 
         $this->locationId = Location::where('is_default', true)->pluck('id')->first();
         Stock::where('is_confirmed', 1)->whereRelation('product', 'product_id', $this->product->id)->whereRelation('location', 'location_id', $this->locationId)->update([
-            'expected_qnty' => $this->qnty,
-            'available_qnty' => $this->qnty,
+            'expected_qnty' => $validated['qnty'],
+            'available_qnty' => $validated['qnty'],
         ]);
 
         session()->flash('message', 'Product Updated Successfully.');

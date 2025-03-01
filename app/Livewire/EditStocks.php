@@ -28,7 +28,7 @@ class EditStocks extends Component
         $validated = $this->validate();
         Stock::where('id', $this->stockId)->update([
             'available_qnty' => $validated['available_qnty'],
-            'expected_qnty' => $validated['expected_qnty'],
+            'expected_qnty' => $validated['available_qnty'],
         ]);
 
     StockLog::create([

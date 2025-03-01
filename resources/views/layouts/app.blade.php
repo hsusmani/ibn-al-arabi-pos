@@ -1375,7 +1375,6 @@
 
 
             <li class="flex flex-row dropdown ">
-
                 <div class="flex flex-row mr-2 font-light text-gray-800 bg-gray-100 text-md items-center px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-gray-300 ">
                     <a href="{{ route('currency', ['name'=> 'egp']) }}" class="{{ session('preferred_currency') == 'EGP' ? 'font-black text-blue-700' : '' }} mx-2" wire:navigate>EGP</a>
                     |<a href="{{ route('currency', ['name'=> 'usd']) }}" class="{{ session('preferred_currency') == 'USD' ? 'font-black text-blue-700' : '' }} mx-2" wire:navigate>USD</a>

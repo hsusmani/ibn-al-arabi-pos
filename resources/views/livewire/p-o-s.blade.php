@@ -74,10 +74,10 @@
                                 <img src="{{ asset('storage/close.png') }}" alt="" width="25" height="25">
                             </button>
                             @foreach ($stocksInfo as $info)
-                                @if($info['product'][0]['id'] == $item['id'])
-                                    <div class="flex flex-row">
-                                        {{ $info['location'][0]['name'] }}: <span class="ml-1 font-bold">{{ $info['available_qnty'] }}</span>
-                                    </div>
+                            @if($info['product'][0]['id'] == $item['id'])
+                            <div class="flex flex-row">
+                                {{ $info['location'][0]['name'] }}: <span class="ml-1 font-bold">{{ $info['available_qnty'] }}</span>
+                            </div>
                                 @endif
                             @endforeach
                         </div>
@@ -88,7 +88,7 @@
                 </div>
             </div>
     <div class="col-span-6">
-        <form wire:submit.prevent="store" class="sticky top-10">
+        <form wire:submit.prevent="store" class="relative">
             <div class="w-full">
                 <div class="flex flex-col">
                     <h2 class="text-xl font-semibold">Cart Summary</h2>
@@ -156,7 +156,7 @@
 
 
             </div>
-            <div class="flex flex-col items-end mt-5 gap-y-2 ">
+            <div class="flex flex-col items-end mt-5 gap-y-2">
                 <div class="relative flex items-center justify-end gap-x-6">
                     <span>Discount:</span>
                     <input wire:model.live='discount' type="number" style="width: 90px;" min="0" max="100" class="{{ empty($cartItems) ? 'px-4 py-2 text-sm bg-gray-100 border border-gray-300 rounded-md shadow-sm placeholder:text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' : 'text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'}}" {{ empty($cartItems) ? 'disabled' : ''}}>

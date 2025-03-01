@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Order;
+use App\Models\Location;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Blade;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,6 +20,9 @@ class SalesReportIndex extends Component
     public $getSales;
     public $sales = [];
 
+    public $location = 'All';
+    public $locations;
+
     public $orderIds = [];
 
     public function updated() {
@@ -28,29 +32,10 @@ class SalesReportIndex extends Component
         // $this->to ? $this->to = Carbon::parse($this->to)->endOfDay()->toDateString() : $this->from = Carbon::now()->endOfDay()->toDateString();
 
         // $sales = Order::whereBetween('created_at', [$this->fromTimeStamp, $this->toTimeStamp])->pluck('items');
-        $sales = Order::whereBetween('created_at', [$this->fromTimeStamp, $this->toTimeStamp])->get();
 
         $this->sales = [];
-        $this->getSales($sales);
+        $this->getSales();
         // $sales = Order::whereBetween('created_at', [$this->from, $this->to])->simplePaginate(10);
-    }
-
-    public function getSales($sales) {
-
-        foreach($sales as $sale) {
-
-            array_push($this->orderIds, [$sale->id]);
-
-            foreach ($sale['items'] as $key => $item) {
-                $this->sales[] = [
-                    'name' => $item['name'],
-                    'name' => $item['name'],
-                    'qnty' => $item['qnty'],
-                    'total' => pricePerCurrency($item['value']['discounted_price']) * $item['qnty'],
-                ];
-            }
-        }
-
     }
 
     public function download() {
@@ -59,15 +44,55 @@ class SalesReportIndex extends Component
     }
 
     public function mount() {
-        $this->fromTimeStamp = Carbon::now()->yesterday();
-        $this->from = $this->fromTimeStamp->toDateString();
+        $this->fromTimeStamp = Carbon::now()->startOfDay();
+        $this->toTimeStamp = Carbon::now()->endOfDay();
+        $this->getSales();
+    }
 
-        $this->toTimeStamp = Carbon::now();
+    public function getSales() {
+        $this->from = $this->fromTimeStamp->toDateString();
         $this->to = $this->toTimeStamp->toDateString();
 
-        $sales = Order::whereBetween('created_at', [$this->fromTimeStamp, $this->toTimeStamp])->get();
-        $this->getSales($sales);
+        $this->locations = Location::get();
+
+        if($this->location == 'All') {
+            $sales = Order::whereBetween('created_at', [$this->fromTimeStamp, $this->toTimeStamp])->get();
+        } else {
+            $sales = Order::whereBetween('created_at', [$this->fromTimeStamp, $this->toTimeStamp])->where('location_id', $this->location)->get();
+        }
+
+        foreach($sales as $sale) {
+
+
+            array_push($this->orderIds, [$sale->id]);
+
+            foreach ($sale['items'] as $key => $item) {
+                array_filter($this->sales, function($sale) use($item) {
+                    dd($sale);
+                    if($item['id'] == $sale['id']) dd(key($sale));
+                });
+
+                // if($saleKey) {
+                //     dd($this->sales[$saleKey]['qnty']);
+                //     $this->sales[$saleKey]['qnty'] = [
+                //         'qnty' => $this->sales[$saleKey]['qnty'] + $item['qnty'],
+                //         'total' => $this->sales[$saleKey]['total'] + $item['value']['discounted_price'],
+                //     ];
+                // } else {
+                //     $this->sales[] = [
+                //         'id' => $item['id'],
+                //         'name' => $item['name'],
+                //         'qnty' => $item['qnty'],
+                //         'total' => $item['value']['discounted_price'],
+                //     ];
+                // }
+
+            }
+        }
+        // dd($saleKey);
+
     }
+
     public function render()
     {
         return view('livewire.sales-report-index');

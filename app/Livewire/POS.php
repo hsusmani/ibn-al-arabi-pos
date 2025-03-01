@@ -57,7 +57,7 @@ class POS extends Component
     public $search = '';
     public $calculate;
     public $calculateAmounts;
-    public $stocksInfo;
+    public $stocksInfo = [];
     public $currency;
     public $minMaxDiscount;
     public bool $orderHasDiscount = false;
@@ -66,18 +66,25 @@ class POS extends Component
     // mount
     public function mount() {
 
+
+
         $this->currency = strtolower(session('preferred_currency'));
         $this->locations = Location::get()->toArray();
         $location = '';
 
-        array_filter($this->locations, function($location) {
-            foreach ($location['users'] as $userId) {
-                if($userId == auth()->user()->id) {
-                    $location = Location::query()->whereJsonContains('users', $userId)->first();
-                    $this->location = $location->id;
+        if(session('location')) {
+            $this->location = session('location');
+        } else {
+            array_filter($this->locations, function($location) {
+                foreach ($location['users'] as $userId) {
+                    if($userId == auth()->user()->id) {
+                        $location = Location::query()->whereJsonContains('users', $userId)->first();
+                        $this->location = $location->id;
+                    }
                 }
-            }
-        });
+            });
+        }
+
 
         if($this->location != NULL) {
             $this->stocks = Stock::with(['product', 'location'])->whereRelation('location', 'location_id', $this->location)->where('is_confirmed', 1)->get()->toArray();
@@ -139,7 +146,7 @@ class POS extends Component
 
         if($single == false) {
             foreach($this->cartItems as $key => $item) {
-                $this->cartItems[$key]['discount'] = $this->discount;
+                $this->cartItems[$key]['discount'] = (int)$this->discount;
                 $this->cartItems[$key]['subTotal'] = ($this->cartItems[$key]['price_'.$this->currency] - ($this->cartItems[$key]['discount']*$this->cartItems[$key]['price_'.$this->currency] / 100)) * $this->cartItems[$key]['qnty'];
             }
         } else {
@@ -183,6 +190,10 @@ class POS extends Component
         $this->total = 0;
         $this->discount = 0;
 
+        $this->stocksInfo = [];
+
+        session(['location' => (int)$this->location]);
+
         $this->stocks = Stock::with(['product', 'location'])->whereRelation('location', 'location_id', (int)$this->location)->get()->toArray();
         foreach($this->stocks as $stock) {
             $this->items[] = [
@@ -199,13 +210,16 @@ class POS extends Component
                 'available_qnty' =>  $stock['available_qnty'],
                 'inCart' =>  0,
             ];
+            $this->stocksInfo = Stock::with(['product', 'location'])->where('is_confirmed', 1)->get()->toArray();
         }
+
     }
 
 
     public function addToCart($index) {
         // if stock is available
-        if($this->items[$index]['available_qnty'] > 0) {
+        // dd($this->items[$index]['price_'.strtolower(session('preferred_currency'))] != NULL);
+        if($this->items[$index]['available_qnty'] > 0 && $this->items[$index]['price_'.strtolower(session('preferred_currency'))] != NULL) {
             // if in cart
             $this->item = array_filter($this->cartItems, function($cartItem) use($index) {
                 if($cartItem['sku'] == $this->items[$index]['sku']) return $cartItem;
@@ -247,16 +261,17 @@ class POS extends Component
 
 
             }
-            // if no stock of the item, show a message and do nothing
-        }else {
-            // show message saying no available
-        }
-        $cartItem = '';
+            $cartItem = '';
         $cartItem = array_filter($this->cartItems, function($cartItem) use($index) {
             if($cartItem['sku'] == $this->items[$index]['sku']) return $cartItem;
         });
 
         $this->calculate(key($cartItem), true);
+            // if no stock of the item, show a message and do nothing
+        }else {
+            // show message saying no available
+        }
+
 
         // dd($this->item);
     }
@@ -296,9 +311,12 @@ class POS extends Component
     }
 
     public function openCheckoutForm() {
+        $this->orderHasDiscount = false;
+        // dd($this->cartItems);
         foreach($this->cartItems as $item) {
             if($item['discount'] > 0 || $this->discount > 0) $this->orderHasDiscount = true;
         }
+
         $this->checkOutValidated = $this->validate();
         $this->checkOutForm = 1;
     }

@@ -1,6 +1,15 @@
 <div class="flex flex-col">
     <div class="flex flex-row items-end justify-end mb-4 space-x-3">
         <div class="flex flex-col">
+            <small>Location</small>
+            <select wire:model.change="location" id="location" class="block w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option>All</option>
+                @foreach ($locations as $location)
+                    <option wire:key='{{ $location['id'] }}' value='{{ $location['id'] }}'>{{ $location['name'] }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="flex flex-col">
             <small>From</small>
             <input wire:model.live="from" type="date" id="from" placeholder="Choose Start Date" class="block w-full px-4 py-2 text-sm text-gray-900 border border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
         </div>

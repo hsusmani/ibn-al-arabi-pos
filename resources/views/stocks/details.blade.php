@@ -70,14 +70,15 @@
                                                 </a>
                                                 @endif
                                                 @endunless
-                                                @unless($stock->is_confirmed)
+                                                {{-- @unless($stock->is_confirmed) --}}
+                                                {{-- @dd($stock->location->first()->id, getUserLocationId()) --}}
                                                 @if($stock->location->first()->id == getUserLocationId())
 
                                                     <a href="{{ route('confirm.transfers', ['stockId' => $stock->id, 'productId' => $stock->product->first()->id]) }}" class="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none focus:ring focus:ring-blue-300">
                                                         Confirm Transfer
                                                     </a>
                                                 @endif
-                                                @endunless
+                                                {{-- @endunless --}}
                                             </div>
                                         </td>
                                     </tr>
