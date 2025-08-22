@@ -11,6 +11,7 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        server: ftp://44.207.201.120:21
+        server: ftp://44.207.201.120
         username: ftp_staging2_safavieh_com
         password: ${{ secrets.ftp_password }}
+        server-dir: 	/www/wwwroot/staging2/
