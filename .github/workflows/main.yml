@@ -14,4 +14,5 @@ jobs:
         server: staging2.safavieh.com
         username: ftp_staging2_safavieh_com
         password: ${{ secrets.ftp_password }}
-        server-dir: 	/www/wwwroot/staging2/
+        server-dir: /www/wwwroot/staging2/
+        timeout: 60000
