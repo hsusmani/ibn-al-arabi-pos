@@ -12,7 +12,7 @@ jobs:
       uses: SamKirkland/web-deploy@v1
       with:
         target-server: staging2.safavieh.com
-        remote-user: ubuntu
+        remote-user: rcp5syct
         private-ssh-key: ${{ secrets.SSH_KEY }}
         destination-path: /www/wwwroot/staging2/
         timeout: 600000
