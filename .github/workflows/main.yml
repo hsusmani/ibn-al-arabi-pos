@@ -16,4 +16,3 @@ jobs:
         password: ${{ secrets.ftp_password }}
         server-dir: /www/wwwroot/staging2/
         timeout: 600000
-        log-level: verbose
