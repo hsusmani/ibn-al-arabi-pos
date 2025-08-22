@@ -12,7 +12,9 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: staging2.safavieh.com
-        username: ftp_staging2_safavieh_com
+        protocol: sftp
+        username: ubuntu
         password: ${{ secrets.ftp_password }}
         server-dir: /www/wwwroot/staging2/
         timeout: 600000
+        port: 22
