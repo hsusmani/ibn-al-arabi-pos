@@ -1,0 +1,21 @@
+
+on: push
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+    
+    - name: 📂 Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: staging2.safavieh.com
+        protocol: sftp
+        username: ubuntu
+        password: ${{ secrets.ftp_password }}
+        server-dir: /www/wwwroot/staging2/
+        timeout: 600000
+        port: 22
