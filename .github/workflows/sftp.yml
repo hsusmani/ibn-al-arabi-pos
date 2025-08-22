@@ -13,7 +13,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: staging2.safavieh.com
-        protocol: sftp
+        protocol: ftps
         username: ubuntu
         password: ${{ secrets.ftp_password }}
         server-dir: /www/wwwroot/staging2/
